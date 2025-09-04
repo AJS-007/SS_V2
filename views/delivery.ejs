@@ -1,0 +1,19 @@
+
+<h2 class="text-2xl font-bold">Delivery Estimator</h2>
+<form method="POST" action="/delivery" class="mt-4">
+  <input name="fromPin" placeholder="Pickup PIN" class="border p-2 mr-2" />
+  <input name="toPin" placeholder="Delivery PIN" class="border p-2 mr-2" />
+  <input name="weight" placeholder="Weight (kg)" class="border p-2 mr-2" />
+  <button class="px-3 py-2 bg-amber-700 text-white rounded">Get Quote</button>
+</form>
+
+<% if (quote) { %>
+  <% if (quote.error) { %>
+    <p class="text-red-600 mt-3"><%= quote.error %></p>
+  <% } else { %>
+    <div class="mt-3 bg-green-50 p-3 rounded">
+      <p>Estimated cost: ₹<%= quote.cost %></p>
+      <p>ETA: <%= quote.etaDays %> days (Carrier: <%= quote.carrier %>)</p>
+    </div>
+  <% } %>
+<% } %>

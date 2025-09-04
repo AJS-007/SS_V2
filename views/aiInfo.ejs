@@ -1,0 +1,7 @@
+<% layout('layout') -%>
+<h2 class="text-2xl font-bold">AI explanation: <%= craft?.name || 'Craft' %></h2>
+<% if (error) { %>
+  <p class="text-red-600"><%= error %></p>
+<% } %>
+<pre class="mt-3 bg-amber-50 p-4 rounded"><%= aiText %></pre>
+<a href="/marketplace" class="mt-3 inline-block">← Back to marketplace</a>

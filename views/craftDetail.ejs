@@ -1,0 +1,16 @@
+<% layout('layout') -%>
+<h2 class="text-2xl font-bold"><%= craft.name %></h2>
+<p class="text-sm text-gray-600">By <%= craft.seller?.name %> • <%= craft.originState %></p>
+
+<div class="mt-4 grid md:grid-cols-2 gap-6">
+  <div>
+    <img src="<%= (craft.images && craft.images[0]) || '/images/placeholder.png' %>" class="w-full rounded" />
+  </div>
+  <div>
+    <p><%= craft.description %></p>
+    <p class="mt-3 font-bold">₹<%= craft.price %></p>
+    <div class="mt-4">
+      <a class="px-4 py-2 bg-blue-600 text-white rounded" href="/ai/<%= craft._id %>">Learn About This Craft (AI)</a>
+    </div>
+  </div>
+</div>
