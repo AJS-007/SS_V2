@@ -1,6 +1,7 @@
 const Seller = require('../models/seller');
 
 exports.showSellerHub = (req, res) => {
+  
   res.render('sellerHub', { message: null });
 };
 

@@ -44,5 +44,17 @@ exports.logout = (req, res) => {
 
 // GET Dashboard (example protected page)
 exports.getDashboard = (req, res) => {
-  res.render('dashboard', { user: req.session.user });
+  if(req.session.user.role === "user"){
+    console.log("user");
+    res.render('userDashboard', { user: req.session.user });
+  }
+  else if(req.session.user.role === "seller"){
+    console.log("seller");
+    res.render('sellerDashboard', { user: req.session.user });
+  }
+  else if(req.session.user.role === "admin"){
+    console.log("admin");
+    res.render('adminDashboard', { user: req.session.user });
+  }
+  //res.render('dashboard', { user: req.session.user });
 };
