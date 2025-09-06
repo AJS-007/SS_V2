@@ -1,12 +1,21 @@
 <h2 class="text-xl font-bold mb-6">Welcome, <%= user.username %>!</h2>
 <a href="/auth/logout" class="text-red-500 underline">Logout</a>
 
-<div class="mt-8">
-  <h3 class="text-lg font-semibold mb-4">Your Orders</h3>
+<% if (!orders || orders.length === 0) { %>
+  <!-- Encouragement Card -->
+  <div class="max-w-4xl mx-auto bg-yellow-100 p-10 rounded shadow text-center mt-12">
+    <h2 class="text-4xl font-extrabold mb-4 text-yellow-900">🌸 Discover the Richness of Indian Handicrafts! 🌸</h2>
+    <p class="text-lg text-yellow-800 mb-6">
+      Your journey to authentic, handcrafted treasures from every corner of India starts here. Support local artisans and find something truly special.
+    </p>
+    <a href="/marketplace" class="inline-block bg-yellow-600 text-white py-3 px-6 rounded text-xl hover:bg-yellow-700 transition">
+      Explore Marketplace
+    </a>
+  </div>
+<% } else { %>
+  <div class="mt-8">
+    <h3 class="text-lg font-semibold mb-4">Your Orders</h3>
 
-  <% if (!orders.length) { %>
-    <p>No orders yet!</p>
-  <% } else { %>
     <!-- Pending Orders -->
     <div>
       <h4 class="text-md font-semibold mb-2">Pending Orders</h4>
@@ -42,5 +51,12 @@
         </div>
       <% }) %>
     </div>
-  <% } %>
+  </div>
+<% } %>
+
+<!-- Explore Marketplace Button Always Visible -->
+<div class="max-w-4xl mx-auto mt-12">
+  <a href="/marketplace" class="inline-block w-full text-center bg-green-600 text-white py-3 rounded hover:bg-green-700 transition">
+    Explore Marketplace
+  </a>
 </div>
