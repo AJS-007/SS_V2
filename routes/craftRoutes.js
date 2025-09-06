@@ -11,7 +11,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get('/', craftController.listCrafts);
-router.get('/new', async (req, res) => { /* you can render a "new craft" form with list of sellers */ });
+router.get('/new', async (req, res) => { /* you can render a "new craft" form with list of sellers */
+  res.render("createCraft");
+ });
 router.get('/:id', craftController.showCraftDetail);
 router.post('/create', upload.array('images', 4), craftController.createCraft);
 

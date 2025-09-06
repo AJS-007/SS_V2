@@ -30,6 +30,8 @@ exports.showCraftDetail = async (req, res) => {
   try {
     const craft = await Craft.findById(req.params.id).populate('seller');
     if (!craft) return res.status(404).send('Not found');
+
+
     res.render('craftDetail', { craft });
   } catch (err) {
     res.status(500).send('Server error');
