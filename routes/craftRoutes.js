@@ -16,5 +16,9 @@ router.get('/new', async (req, res) => { /* you can render a "new craft" form wi
  });
 router.get('/:id', craftController.showCraftDetail);
 router.post('/create', upload.array('images', 4), craftController.createCraft);
+router.get('/:id/buy', craftController.showBuyForm);
+router.post('/:id/buy', craftController.processOrder);
+
+
 
 module.exports = router;

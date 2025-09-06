@@ -1,0 +1,92 @@
+<!-- Flash Message -->
+<% if (success && success.length > 0) { %>
+  <div class="p-4 mb-4 text-green-800 bg-green-100 border border-green-300 rounded">
+    <%= success[0] %>
+  </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+  <div class="p-4 mb-4 text-red-800 bg-red-100 border border-red-300 rounded">
+    <%= error[0] %>
+  </div>
+<% } %>
+
+<div class="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
+  <div class="grid md:grid-cols-2 gap-6 items-start">
+
+    <!-- ✅ Left: Form or Success Message -->
+    <div>
+      <h2 class="text-3xl font-bold mb-2">Buy: <%= craft.name %></h2>
+      <p class="text-sm text-gray-500 mb-4">From: <%= craft.seller?.name %> • <%= craft.originState %></p>
+
+      <p class="text-base text-gray-700 mb-2">Price per item: ₹<span id="price"><%= craft.price %></span></p>
+
+      <!-- ✅ Success Message -->
+      <% if (typeof orderSuccess !== 'undefined' && orderSuccess) { %>
+        <div class="p-4 mt-4 text-green-800 bg-green-100 border border-green-300 rounded">
+          ✅ Order placed successfully!
+        </div>
+      <% } else { %>
+        <!-- ✅ Buy Form -->
+        <form action="/marketplace/<%= craft._id %>/buy" method="POST" class="space-y-4 mt-4">
+          <div>
+            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Enter Quantity:</label>
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              min="1"
+              value="1"
+              required
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+          </div>
+
+          <input type="hidden" name="price" value="<%= craft.price %>">
+
+          <div>
+            <p class="text-lg font-semibold text-gray-800">
+              Grand Total: ₹<span id="grandTotal"><%= craft.price %></span>
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-green-600 text-white font-medium py-2 px-4 rounded hover:bg-green-700 transition"
+          >
+            Buy Now
+          </button>
+        </form>
+      <% } %>
+    </div>
+
+    <!-- ✅ Right: Always show image -->
+    <div>
+      <img
+        src="<%= (craft.images && craft.images[0]) || '/images/placeholder.png' %>"
+        alt="Craft Image"
+        class="rounded-lg shadow-md w-full object-cover"
+      >
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<!-- JavaScript for dynamic total -->
+<script>
+  const quantityInput = document.getElementById('quantity');
+  const price = parseFloat(document.getElementById('price').textContent);
+  const grandTotalEl = document.getElementById('grandTotal');
+
+  function updateTotal() {
+    const qty = parseInt(quantityInput.value);
+    const total = isNaN(qty) || qty <= 0 ? 0 : qty * price;
+    grandTotalEl.textContent = total.toFixed(2);
+  }
+
+  quantityInput.addEventListener('input', updateTotal);
+  window.addEventListener('DOMContentLoaded', updateTotal);
+</script>

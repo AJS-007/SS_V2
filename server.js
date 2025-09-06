@@ -5,6 +5,7 @@ const methodOverride = require('method-override');
 const path = require('path');
 const connectDB = require('./config/db');
 const expressLayouts = require("express-ejs-layouts");
+const flash = require('connect-flash');
 
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -44,7 +45,14 @@ app.use((req, res, next) => {
 });
 
 
+app.use(flash());
 
+// Make flash messages available in all views
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
+});
 
 // static files
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));

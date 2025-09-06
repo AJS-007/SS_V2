@@ -1,5 +1,6 @@
 const Craft = require('../models/craft');
 const Seller = require('../models/seller');
+const Order = require('../models/order');
 
 // list crafts, optional ?state=Karnataka
 exports.listCrafts = async (req, res) => {
@@ -74,4 +75,53 @@ exports.createCraft = async (req, res) => {
   }
 
 
+};
+
+
+
+exports.showBuyForm = async (req, res) => {
+  try {
+    const craft = await Craft.findById(req.params.id).populate('seller');
+    if (!craft) return res.status(404).send("Craft not found");
+    res.render('buyForm', { craft });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+};
+
+
+
+
+exports.processOrder = async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    const craft = await Craft.findById(req.params.id).populate('seller');
+    const user = req.session.user;
+
+    if (!user) return res.status(401).send("Please log in to buy");
+
+    const qty = parseInt(quantity);
+    if (!craft || isNaN(qty) || qty <= 0) return res.status(400).send("Invalid order");
+
+    const totalPrice = craft.price * qty;
+
+    const order = new Order({
+      craft: craft._id,
+      seller: craft.seller._id,
+      buyer: user._id,
+      quantity: qty,
+      totalPrice
+    });
+
+    await order.save();
+
+    // 👇 Render the form again, with success message
+    req.flash('success', '✅ Order placed successfully!');
+    res.redirect('/marketplace/' + req.params.id + '/buy');
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error placing order");
+  }
 };

@@ -1,6 +1,8 @@
 const User = require('../models/userModel');
 const Craft = require('../models/craft');
 const Seller = require('../models/seller');
+const Order = require('../models/order');
+
 
 // GET Signup form
 exports.getSignup = (req, res) => {
@@ -63,25 +65,108 @@ exports.logout = (req, res) => {
 // GET Dashboard (example protected page)
 exports.getDashboard = async (req, res) => {
   const user = req.session.user;
-  
-  if(req.session.user.role === "user"){
-    console.log("user");
-    res.render('userDashboard', { user});
-  }
-  else if(user.role === "seller"){
-    console.log("seller");
 
-    // fetch crafts by seller id = user._id
+  if (user.role === "user") {
+    try {
+      // Fetch orders with craft info for logged-in user
+      const orders = await Order.find({ buyer: user._id })
+        .populate('craft')
+        .sort({ createdAt: -1 })
+        .lean();
+
+      // Calculate if orders are delivered (3 days passed)
+      const now = new Date();
+      orders.forEach(order => {
+        const daysSinceOrder = (now - new Date(order.createdAt)) / (1000 * 60 * 60 * 24);
+        order.isDelivered = daysSinceOrder >= 3;
+      });
+
+      // Render userDashboard with orders data
+      return res.render('userDashboard', { user, orders });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send("Error loading dashboard");
+    }
+  } 
+  else if (user.role === "seller") {
+    // Existing seller dashboard logic
     const crafts = await Craft.find({ seller: user._id }).lean();
-
-    // fetch seller info by user._id
     const sellerInfo = await Seller.findById(user._id).lean();
-
-    res.render('sellerDashboard', { user, seller: sellerInfo, crafts  });
+    return res.render('sellerDashboard', { user, seller: sellerInfo, crafts });
+  } 
+  else if (user.role === "admin") {
+    // Existing admin dashboard logic
+    return res.render('adminDashboard', { user });
   }
-  else if(req.session.user.role === "admin"){
-    console.log("admin");
-    res.render('adminDashboard', { user});
-  }
-  //res.render('dashboard', { user: req.session.user });
 };
+
+
+// Cancel order
+exports.cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const userId = req.session.user._id;
+
+    const order = await Order.findOne({ _id: orderId, buyer: userId });
+    if (!order) return res.status(404).send("Order not found");
+
+    if (order.status === 'Cancelled') {
+      return res.status(400).send("Order already cancelled");
+    }
+
+    order.status = 'Cancelled';
+    await order.save();
+
+    res.redirect('/auth/dashboard');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error cancelling order");
+  }
+};
+
+// Render edit order form
+exports.editOrderForm = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const userId = req.session.user._id;
+
+    const order = await Order.findOne({ _id: orderId, buyer: userId }).populate('craft').lean();
+    if (!order) return res.status(404).send("Order not found");
+
+    res.render('editOrderForm', { order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading order edit form");
+  }
+};
+
+// Process order update
+exports.updateOrder = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const userId = req.session.user._id;
+    const { quantity } = req.body;
+
+    const order = await Order.findOne({ _id: orderId, buyer: userId });
+    if (!order) return res.status(404).send("Order not found");
+
+    if (order.status === 'Cancelled') {
+      return res.status(400).send("Cannot edit cancelled order");
+    }
+
+    const qty = parseInt(quantity);
+    if (isNaN(qty) || qty <= 0) {
+      return res.status(400).send("Invalid quantity");
+    }
+
+    order.quantity = qty;
+    order.totalPrice = order.craft.price * qty; // Make sure craft is populated or fetch price separately
+    await order.save();
+
+    res.redirect('/auth/dashboard');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating order");
+  }
+};
+

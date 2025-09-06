@@ -1,0 +1,63 @@
+<div class="max-w-4xl mx-auto bg-white p-6 rounded shadow flex gap-6">
+  <!-- Left: Form -->
+  <div class="flex-1">
+    <h2 class="text-2xl font-bold mb-4">Edit Order - <%= order.craft.name %></h2>
+
+    <form action="/auth/dashboard/orders/<%= order._id %>/edit" method="POST" class="space-y-4">
+      <div>
+        <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+        <input
+          type="number"
+          name="quantity"
+          id="quantity"
+          min="1"
+          value="<%= order.quantity %>"
+          required
+          class="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+        >
+      </div>
+
+      <p class="text-gray-600">Price per item: ₹<%= order.craft.price %></p>
+      <p class="text-gray-800 font-semibold">
+        Total Price: ₹<span id="totalPrice"><%= order.craft.price * order.quantity %></span>
+      </p>
+      
+
+      <div class="mt-6">
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+        >
+          Update Order
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-4">
+      <a href="/auth/dashboard" class="text-blue-500 underline">Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Right: Image -->
+  <div class="w-48 flex-shrink-0">
+    <img
+      src="<%= (order.craft.images && order.craft.images[0]) || '/images/placeholder.png' %>"
+      alt="<%= order.craft.name %>"
+      class="rounded shadow object-cover w-full h-full"
+    />
+  </div>
+</div>
+
+<script>
+  //const pricePerItem = <%- JSON.stringify(order.craft.price) %>; //Error Here if we un comment this line
+  const quantityInput = document.getElementById('quantity');
+  const totalPriceSpan = document.getElementById('totalPrice');
+
+  quantityInput.addEventListener('input', () => {
+    let qty = parseInt(quantityInput.value);
+    if (isNaN(qty) || qty < 1) qty = 1;
+    totalPriceSpan.textContent = pricePerItem * qty;
+  });
+</script>
+
+
