@@ -9,10 +9,20 @@ exports.listCrafts = async (req, res) => {
     const crafts = await Craft.find(filter).populate('seller').sort({ createdAt: -1 });
     // get distinct states for filter dropdown
     const states = await Craft.distinct('originState');
-    console.log(crafts);
-    res.render('marketplace', { crafts, states, selectedState: req.query.state || '' });
+    //console.log(crafts);
+
+    let curr_user_crafts = [];
+    let role = null;
+
+    if (req.session.user) {
+      curr_user_crafts = await Craft.find({ seller: req.session.user._id });
+      role = req.session.user.role;
+      console.log("--------------------------------------Logged-in user's crafts:", curr_user_crafts, "\nRole:", role);
+    }
+
+    res.render('marketplace', { crafts, states, curr_user_crafts, ...(role && { role }) ,selectedState: req.query.state || '' });
   } catch (err) {
-    res.status(500).send('Server error');
+    res.status(500).send('Server error: ',err);
   }
 };
 

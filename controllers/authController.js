@@ -1,4 +1,6 @@
 const User = require('../models/userModel');
+const Craft = require('../models/craft');
+const Seller = require('../models/seller');
 
 // GET Signup form
 exports.getSignup = (req, res) => {
@@ -31,7 +33,23 @@ exports.postLogin = async (req, res) => {
     return res.send('Invalid credentials');
   }
 
-  req.session.user = user;
+  //req.session.user = user;       //
+
+  let sellerData = null;
+  if (user.role === 'seller') {
+    sellerData = await Seller.findById(user._id).lean();  // Match seller _id to user _id
+  }
+
+  // Store only minimal user info (excluding password) + seller info if any
+  req.session.user = {
+    _id: user._id,
+    username: user.username,
+    role: user.role,
+    sellerInfo: sellerData || null
+  };
+
+
+
   res.redirect('/auth/dashboard');
 };
 
@@ -43,18 +61,27 @@ exports.logout = (req, res) => {
 };
 
 // GET Dashboard (example protected page)
-exports.getDashboard = (req, res) => {
+exports.getDashboard = async (req, res) => {
+  const user = req.session.user;
+  
   if(req.session.user.role === "user"){
     console.log("user");
-    res.render('userDashboard', { user: req.session.user });
+    res.render('userDashboard', { user});
   }
-  else if(req.session.user.role === "seller"){
+  else if(user.role === "seller"){
     console.log("seller");
-    res.render('sellerDashboard', { user: req.session.user });
+
+    // fetch crafts by seller id = user._id
+    const crafts = await Craft.find({ seller: user._id }).lean();
+
+    // fetch seller info by user._id
+    const sellerInfo = await Seller.findById(user._id).lean();
+
+    res.render('sellerDashboard', { user, seller: sellerInfo, crafts  });
   }
   else if(req.session.user.role === "admin"){
     console.log("admin");
-    res.render('adminDashboard', { user: req.session.user });
+    res.render('adminDashboard', { user});
   }
   //res.render('dashboard', { user: req.session.user });
 };

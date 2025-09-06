@@ -1,4 +1,26 @@
 
+<h2 class="text-2xl font-bold">My Listings</h2><br>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <% curr_user_crafts.forEach(curr_user_craft => { %>
+    <div class="bg-white rounded-lg p-4 shadow">
+      <img src="<%= (curr_user_craft.images && curr_user_craft.images[0]) || '/images/placeholder.png' %>" class="w-full h-40 object-cover rounded" />
+      <h3 class="font-semibold mt-2"><%= curr_user_craft.name %></h3>
+      <p class="text-sm text-gray-600">By <%= curr_user_craft.seller?.name || 'Me' %> • <%= curr_user_craft.originState %></p>
+      <!-- <p>Name: <%= curr_user_craft %></p> -->
+      <p class="mt-2 text-sm line-clamp-3"><%= curr_user_craft.description %></p>
+      <div class="mt-3 flex justify-between items-center">
+        <span class="font-bold">₹<%= curr_user_craft.price %></span>
+        <div>
+          <a class="px-3 py-1 bg-amber-700 text-white rounded" href="/marketplace/<%= curr_user_craft._id %>">View</a>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+
+
+<br>
 <h2 class="text-2xl font-bold">Marketplace</h2>
 
 <form method="GET" action="/marketplace" class="my-3">
