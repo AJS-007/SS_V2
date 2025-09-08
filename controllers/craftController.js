@@ -83,6 +83,7 @@ exports.showBuyForm = async (req, res) => {
   try {
     const craft = await Craft.findById(req.params.id).populate('seller');
     if (!craft) return res.status(404).send("Craft not found");
+    
     res.render('buyForm', { craft });
   } catch (err) {
     console.error(err);

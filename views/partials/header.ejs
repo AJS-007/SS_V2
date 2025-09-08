@@ -21,4 +21,49 @@
     
     </nav>
   </div>
+
+  <!-- Floating Icon -->
+  <div id="chatbotIcon">
+<img src="/images/icon.jpg" alt="Chatbot icon" id="chatbotIconImg">
+    <div id="chatbotName">CraftSeek</div>
+  </div>
+
+  <!-- Overlay -->
+  <div id="chatOverlay">
+    <div class="language-container">
+      <label for="languageSelect">Select Language</label>
+      <select id="languageSelect" onchange="updateLanguage()">
+        <option value="en" data-lang="en-US">English</option>
+        <option value="hi" data-lang="hi-IN">Hindi</option>
+        <option value="es" data-lang="es-ES">Spanish</option>
+        <option value="fr" data-lang="fr-FR">French</option>
+        <option value="ar" data-lang="ar-SA">Arabic</option>
+        <option value="bn" data-lang="bn-IN">Bengali</option>
+        <option value="pt" data-lang="pt-BR">Portuguese</option>
+        <option value="ru" data-lang="ru-RU">Russian</option>
+        <option value="ja" data-lang="ja-JP">Japanese</option>
+        <option value="de" data-lang="de-DE">German</option>
+        <option value="ur" data-lang="ur-PK">Urdu</option>
+        <option value="id" data-lang="id-ID">Indonesian</option>
+        <option value="tr" data-lang="tr-TR">Turkish</option>
+        <option value="ta" data-lang="ta-IN">Tamil</option>
+      </select>
+    </div>
+
+    <div class="chat-container">
+      <h2 id="title">🦚 CraftSeek Assistant</h2>
+
+      <!-- Suggestions -->
+      <div class="suggestions" id="suggestionsBar"></div>
+
+      <div id="chatbox"></div>
+
+      <div class="input-container">
+        <button class="voice-btn" onclick="playVoice()">🔊</button>
+        <input type="text" id="userInput" placeholder="Ask about an Art & Craft...">
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+        <button class="mic-btn" onclick="startListening()">🎙</button>
+      </div>
+    </div>
+  </div>
 </header>

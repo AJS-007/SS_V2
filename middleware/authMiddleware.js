@@ -27,6 +27,7 @@ exports.isLoggedIn = (req, res, next) => {
 
   if (!user) {
     // Not logged in
+    req.flash('error', 'Please log in to continue');
     return res.redirect('/auth/login');
   }
 

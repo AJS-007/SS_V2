@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const craftController = require('../controllers/craftController');
+const { isLoggedIn } = require('../middleware/authMiddleware');
 const multer = require('multer');
+
 
 // setup multer storage into public/uploads
 const storage = multer.diskStorage({
@@ -16,7 +18,7 @@ router.get('/new', async (req, res) => { /* you can render a "new craft" form wi
  });
 router.get('/:id', craftController.showCraftDetail);
 router.post('/create', upload.array('images', 4), craftController.createCraft);
-router.get('/:id/buy', craftController.showBuyForm);
+router.get('/:id/buy', isLoggedIn ,craftController.showBuyForm);
 router.post('/:id/buy', craftController.processOrder);
 
 
