@@ -9,7 +9,7 @@
       bottom: 20px;
       right: 20px;
       width: 190px;   /* increase width */
-      height: 280px;  /* increase height */
+      height: 200px;  /* increase height */
       border-radius: 50%;
       display: flex;
       flex-direction: column;  /*stack image and name vertically */
@@ -29,12 +29,13 @@
    }
 
    #chatbotName {
-      margin-top: 10px;
-      font-size: 18px;
-      font-weight: bold;
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
       color: #333;
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
       pointer-events: none; /* so clicking the name still clicks the icon */
+      font-family:Arial, Helvetica, sans-serif;
    }
 
 

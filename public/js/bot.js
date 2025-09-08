@@ -94,7 +94,6 @@
   }
 }
 
-
     
 let isSpeaking = false;
 let isPaused = false;
